@@ -334,7 +334,7 @@ def portfolio_pdf(request, pk):
                             'sum_of_initial_stock_value': sum_of_initial_stock_value,
                             'sum_current_funds_value': sum_current_funds_value,
                             'sum_of_initial_funds_value': sum_of_initial_funds_value, })
-    path_wkhtmltopdf = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
+    path_wkhtmltopdf = r'.\bin\wkhtmltopdf.exe'
     config = pdfkit.configuration(wkhtmltopdf=path_wkhtmltopdf)
     options = {
         'page-size': 'Letter',
