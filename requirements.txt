@@ -16,4 +16,5 @@ wkhtmltopdf-pack
 psycopg2==2.8.4
 gunicorn
 django-heroku
+WeasyPrint
 

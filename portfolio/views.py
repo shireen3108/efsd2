@@ -292,6 +292,9 @@ def fund_delete(request, pk):
     fund.delete()
     return redirect('portfolio:fund_list')
 
+from django.http import HttpResponse
+from weasyprint import HTML
+from django.template.loader import render_to_string
 
 @login_required
 def portfolio_pdf(request, pk):
@@ -321,8 +324,8 @@ def portfolio_pdf(request, pk):
             int(Decimal(sum_current_funds_value)*100/totalinv),
                 int(Decimal(sum_recent_value['recent_value__sum'])*100/totalinv)]
 
-    template = get_template('portfolio/portfolio_pdf.html')
-    html = template.render({'customer': customer,
+    # template = get_template('portfolio/portfolio_pdf.html')
+    html_string = render_to_string('portfolio/portfolio_pdf.html',{'customer': customer,
                             'investments': investments,
                             'stocks': stocks,
                             'funds': funds,
@@ -335,20 +338,26 @@ def portfolio_pdf(request, pk):
                             'sum_current_funds_value': sum_current_funds_value,
                             'sum_of_initial_funds_value': sum_of_initial_funds_value, })
 
-    if platform.system() == "Windows":
-        pdfkit_config = pdfkit.configuration(
-            wkhtmltopdf=os.environ.get('WKHTMLTOPDF_BINARY', 'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'))
-    else:
-        os.environ['PATH'] += os.pathsep + os.path.dirname(sys.executable)
-        WKHTMLTOPDF_CMD = subprocess.Popen(['which', os.environ.get('WKHTMLTOPDF_BINARY', 'wkhtmltopdf')],
-                                           stdout=subprocess.PIPE).communicate()[0].strip()
-        pdfkit_config = pdfkit.configuration(wkhtmltopdf=WKHTMLTOPDF_CMD)
-
-    options = {
-        'page-size': 'Letter',
-        'encoding': "UTF-8",
-    }
-    pdf = pdfkit.from_string(html, False, options, configuration=pdfkit_config)
-    response = HttpResponse(pdf, content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename=portfolio-' + str(customer.cust_number) + '.pdf'
+    # if platform.system() == "Windows":
+    #     pdfkit_config = pdfkit.configuration(
+    #         wkhtmltopdf=os.environ.get('WKHTMLTOPDF_BINARY', 'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'))
+    # else:
+    #     os.environ['PATH'] += os.pathsep + os.path.dirname(sys.executable)
+    #     WKHTMLTOPDF_CMD = subprocess.Popen(['which', os.environ.get('WKHTMLTOPDF_BINARY', 'wkhtmltopdf')],
+    #                                        stdout=subprocess.PIPE).communicate()[0].strip()
+    #     pdfkit_config = pdfkit.configuration(wkhtmltopdf=WKHTMLTOPDF_CMD)
+    #
+    # options = {
+    #     'page-size': 'Letter',
+    #     'encoding': "UTF-8",
+    # }
+    # pdf = pdfkit.from_string(html, False, options, configuration=pdfkit_config)
+    # response = HttpResponse(pdf, content_type='application/pdf')
+    # response['Content-Disposition'] = 'attachment; filename=portfolio-' + str(customer.cust_number) + '.pdf'
+    # return response
+    html = HTML(string=html_string)
+    response = HttpResponse(content_type='application/pdf;')
+    response['Content-Disposition'] = 'inline; filename=portfolio_summary.pdf'
+    response['Content-Transfer-Encoding'] = 'binary'
+    result = html.write_pdf(response,)
     return response
