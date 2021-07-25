@@ -38,7 +38,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.postgres',
     'portfolio',
+    'rest_framework',
+    'mathfilters',
+    'django.contrib.humanize',
 ]
 
 MIDDLEWARE = [
@@ -77,10 +81,18 @@ WSGI_APPLICATION = 'efsd2.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # }
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'HOST': 'ec2-52-2-118-38.compute-1.amazonaws.com',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'd72rmhra2lfqda',
+        'USER': 'jjglphauclkjbs',
+        'PASSWORD': '6104ca918e0ac61de083d5bc4dc67c759d86f5352923f54bab8fa9932e3a39a1'
     }
+
 }
 
 

@@ -1,0 +1,236 @@
+{% extends 'portfolio/base.html' %}
+{% load humanize %}
+{% load mathfilters %}
+
+{% block content %}
+    <div class="row">
+        <h1 style="padding-left: 15Px">Customer Portfolio - {{ customer.name }}</h1>
+    </div>
+
+    <div class="row">
+        <h2 style="padding-left: 15Px">Overall Portfolio Performance</h2>
+    </div>
+    <div class="row">
+    <table class="table table-striped table-bordered table-hover">
+        <thead>
+        <tr class="bg-info">
+            <th>Portfolio Initial Investments</th>
+            <th>Portfolio Current Investments</th>
+            <th>Grand Total Results</th>
+
+
+        </tr>
+        </thead>
+        <tbody>
+             <tr>
+                <td>{{ sum_of_initial_stock_value|add:sum_acquired_value.acquired_value__sum|floatformat:"3"|intcomma }}</td>
+                <td>{{ sum_current_stocks_value|add:sum_recent_value.recent_value__sum|floatformat:"3"|intcomma }}</td>
+                <td>{{ sum_current_stocks_value|add:sum_recent_value.recent_value__sum|sub:sum_of_initial_stock_value|sub:sum_acquired_value.acquired_value__sum|floatformat:"3"|intcomma }}</td>
+            </tr>
+         </tbody>
+    </table>
+    </div>
+
+       <canvas id="pie-chart"></canvas>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+  <script>
+
+    var config = {
+      type: 'pie',
+      data: {
+        datasets: [{
+          data: {{ data|safe }},
+          backgroundColor: [
+            'blue', 'seagreen', 'yellow'
+          ],
+          label: 'Investment Allocation'
+        }],
+        labels: {{ labels|safe }}
+      },
+      options: {
+        responsive: true
+      }
+    };
+
+    window.onload = function() {
+      var ctx = document.getElementById('pie-chart').getContext('2d');
+      window.myPie = new Chart(ctx, config);
+    };
+
+  </script>
+
+{#    stocks#}
+    <div class="row">
+        <h2 style="padding-left: 15Px">Stocks Information</h2>
+    </div>
+    <div class="row">
+        <table class="table table-striped table-bordered table-hover">
+            <thead>
+            <tr class="bg-info">
+                <th>Customer</th>
+                <th>Symbol</th>
+                <th>Name</th>
+                <th>Shares</th>
+                <th>Initial Stock Price</th>
+                <th>Initial Stock Value</th>
+                <th>Current Stock Price</th>
+                <th>Current Stock Value</th>
+                <th>Results</th>
+
+            </tr>
+            </thead>
+            <tbody>
+            {% for stock in stocks %}
+                <tr>
+                    <td>{{ stock.customer }}</td>
+                    <td>{{ stock.symbol }}</td>
+                    <td>{{ stock.name }}</td>
+                    <td>{{ stock.shares|intcomma }}</td>
+                    <td>{{ stock.purchase_price|intcomma }}</td>
+                    <td>{{ stock.initial_stock_value|intcomma }}</td>
+                    <td>{{ stock.current_stock_price|intcomma }}</td>
+                    <td>{{ stock.current_stock_value|intcomma }}</td>
+                    <td>{{ stock.current_stock_value|sub:stock.initial_stock_value|intcomma }}</td>
+
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{#    total stocks #}
+    <div class="row">
+        <table class="table table-striped table-bordered table-hover">
+            <thead>
+            <tr class="bg-info">
+                <th>Total of Initial Stocks</th>
+                <th>Total of Current Stocks</th>
+                <th>Results</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>{{ sum_of_initial_stock_value|intcomma }}</td>
+                <td>{{ sum_current_stocks_value|intcomma }}</td>
+                <td>{{ sum_current_stocks_value|sub:sum_of_initial_stock_value|intcomma }}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+{#    funds#}
+    <div class="row">
+        <h2 style="padding-left: 15Px">Funds Information</h2>
+    </div>
+    <div class="row">
+        <table class="table table-striped table-bordered table-hover">
+            <thead>
+            <tr class="bg-info">
+                <th>Customer</th>
+                <th>Symbol</th>
+                <th>Name</th>
+                <th>Shares</th>
+                <th>Initial Fund Price</th>
+                <th>Initial Fund Value</th>
+                <th>Current Fund Price</th>
+                <th>Current Fund Value</th>
+                <th>Results</th>
+
+            </tr>
+            </thead>
+            <tbody>
+            {% for fund in funds %}
+                <tr>
+                    <td>{{ fund.customer }}</td>
+                    <td>{{ fund.symbol }}</td>
+                    <td>{{ fund.name }}</td>
+                    <td>{{ fund.shares|intcomma }}</td>
+                    <td>{{ fund.purchase_price|intcomma }}</td>
+                    <td>{{ fund.initial_fund_value|intcomma }}</td>
+                    <td>{{ fund.current_fund_price|intcomma }}</td>
+                    <td>{{ fund.current_fund_value|intcomma }}</td>
+                    <td>{{ fund.current_fund_value|sub:fund.initial_fund_value|intcomma }}</td>
+
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{#    total funds #}
+    <div class="row">
+        <table class="table table-striped table-bordered table-hover">
+            <thead>
+            <tr class="bg-info">
+                <th>Total of Initial Funds</th>
+                <th>Total of Current Funds</th>
+                <th>Results</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>{{ sum_of_initial_funds_value|intcomma }}</td>
+                <td>{{ sum_current_funds_value|intcomma }}</td>
+                <td>{{ sum_current_funds_value|sub:sum_of_initial_funds_value|intcomma }}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="row">
+        <h2 style="padding-left: 15Px">Investment Information</h2>
+    </div>
+    <div class="row">
+        <table class="table table-striped table-bordered table-hover">
+            <thead>
+            <tr class="bg-info">
+                <th>Customer</th>
+                <th>Category</th>
+                <th>Description</th>
+                <th>Acquired Value</th>
+                <th>Acquired Date</th>
+                <th>Recent Value</th>
+                <th>Recent Date</th>
+                <th>Results</th>
+
+            </tr>
+            </thead>
+            <tbody>
+           {% for investment in investments %}
+                <tr>
+                    <td>{{ investment.customer }}</td>
+                    <td>{{ investment.category }}</td>
+                    <td>{{ investment.description }}</td>
+                    <td>{{ investment.acquired_value|intcomma }}</td>
+                    <td>{{ investment.acquired_date|naturalday }}</td>
+                    <td>{{ investment.recent_value|intcomma }}</td>
+                    <td>{{ investment.recent_date|naturalday }}</td>
+                    <td>{{ investment.results_by_investment }}</td>
+
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{#    total investments #}
+    <div class="row">
+        <table class="table table-striped table-bordered table-hover">
+            <thead>
+            <tr class="bg-info">
+                <th>Total of Initial Investments</th>
+                <th>Total of Current Investments</th>
+                <th>Results</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>{{ sum_acquired_value.acquired_value__sum|floatformat:"3"|intcomma }}</td>
+                <td>{{ sum_recent_value.recent_value__sum|floatformat:"3"|intcomma }}</td>
+                <td>{{ sum_recent_value.recent_value__sum|sub:sum_acquired_value.acquired_value__sum|floatformat:"3"|intcomma }}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    </div>
+
+ {% endblock %}

@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+import requests
 
 
 # Create your models here.
@@ -27,6 +28,7 @@ class Customer(models.Model):
     def __str__(self):
         return str(self.cust_number)
 
+
 class Investment(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='investments')
     category = models.CharField(max_length=50)
@@ -50,6 +52,7 @@ class Investment(models.Model):
     def results_by_investment(self):
         return self.recent_value - self.acquired_value
 
+
 class Stock(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='stocks')
     symbol = models.CharField(max_length=10)
@@ -68,9 +71,41 @@ class Stock(models.Model):
     def initial_stock_value(self):
         return self.shares * self.purchase_price
 
+    def current_stock_price(self):
+        symbol_f = str(self.symbol)
+        main_api = 'http://api.marketstack.com/v1/eod?'
+        api_key = 'access_key=1f766324d008e959d83b34957c1e877d&limit=1&symbols='
+        url = main_api + api_key + symbol_f
+        json_data = requests.get(url).json()
+        open_price = float(json_data["data"][0]["open"])
+        share_value = open_price
+        return share_value
+
+    def current_stock_value(self):
+        return float(self.current_stock_price()) * float(self.shares)
 
 
+class Fund(models.Model):
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='fund')
+    symbol = models.CharField(max_length=10)
+    name = models.CharField(max_length=50)
+    shares = models.DecimalField(max_digits=10, decimal_places=1, default=0)
+    purchase_price = models.DecimalField(max_digits=10, decimal_places=2)
+    purchase_date = models.DateField(default=timezone.now, blank=True, null=True)
 
+    def created(self):
+        self.acquired_date = timezone.now()
+        self.save()
 
+    def __str__(self):
+        return str(self.customer)
 
+    def initial_fund_value(self):
+        return self.shares * self.purchase_price
+
+    def current_fund_price(self):
+        return self.purchase_price + 50
+
+    def current_fund_value(self):
+        return float(self.current_fund_price()) * float(self.shares)
 

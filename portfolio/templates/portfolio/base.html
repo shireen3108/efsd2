@@ -6,6 +6,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel = "icon" href="{% static "images/icon.png" %}"
+        type = "image/x-icon">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <style>
@@ -72,6 +74,7 @@
                 <li><a href="{% url 'portfolio:customer_list' %}">Customers</a></li>
                <li><a href="{% url 'portfolio:investment_list' %}">Investments</a></li>
                 <li><a href="{% url 'portfolio:stock_list' %}">Stocks</a></li>
+                <li><a href="{% url 'portfolio:fund_list' %}">Funds</a></li>
 
             </ul>
             <ul class="nav navbar-nav navbar-right">
@@ -134,7 +137,18 @@
                                     <h2>Stock Portfolio</h2>
                                     <p>Our Stock portfolios vary across industries.</p>
                                         details &raquo;</a></p>
-                                    <p><a class="btn btn-default" href="{% url 'portfolio:stock_list' %}" role="button">View
+                                    <p><a class="btn btn-default" href="{% url 'portfolio:stock_list' %}" role="button">View</a></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="thumbnail">
+                                <img src="{% static "images/funds.jpg" %}" alt="funds"/>
+                                <div class="caption">
+                                    <h2>Funds Portfolio</h2>
+                                    <p>Our Mutual Funds portfolios vary across industries.</p>
+                                        details &raquo;</a></p>
+                                    <p><a class="btn btn-default" href="{% url 'portfolio:fund_list' %}" role="button">View</a></p>
                                 </div>
                             </div>
                         </div>
