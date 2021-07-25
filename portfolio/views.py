@@ -334,13 +334,21 @@ def portfolio_pdf(request, pk):
                             'sum_of_initial_stock_value': sum_of_initial_stock_value,
                             'sum_current_funds_value': sum_current_funds_value,
                             'sum_of_initial_funds_value': sum_of_initial_funds_value, })
-    path_wkhtmltopdf = r'.\bin\wkhtmltopdf.exe'
-    config = pdfkit.configuration(wkhtmltopdf=path_wkhtmltopdf)
+
+    if platform.system() == "Windows":
+        pdfkit_config = pdfkit.configuration(
+            wkhtmltopdf=os.environ.get('WKHTMLTOPDF_BINARY', 'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'))
+    else:
+        os.environ['PATH'] += os.pathsep + os.path.dirname(sys.executable)
+        WKHTMLTOPDF_CMD = subprocess.Popen(['which', os.environ.get('WKHTMLTOPDF_BINARY', 'wkhtmltopdf')],
+                                           stdout=subprocess.PIPE).communicate()[0].strip()
+        pdfkit_config = pdfkit.configuration(wkhtmltopdf=WKHTMLTOPDF_CMD)
+
     options = {
         'page-size': 'Letter',
         'encoding': "UTF-8",
     }
-    pdf = pdfkit.from_string(html, False, options, configuration=config)
+    pdf = pdfkit.from_string(html, False, options, configuration=pdfkit_config)
     response = HttpResponse(pdf, content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename=portfolio-' + str(customer.cust_number) + '.pdf'
     return response
