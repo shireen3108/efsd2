@@ -12,7 +12,7 @@ requests==2.26.0
 sqlparse==0.4.1
 urllib3==1.26.6
 wkhtmltopdf==0.2
-psycopg2==2.8.4
-gunicorn
-django-heroku
+# psycopg2==2.8.4
+# gunicorn
+# django-heroku
 
